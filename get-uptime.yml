@@ -1,0 +1,20 @@
+---
+- name: Get uptime
+  hosts: all
+  gather_facts: no
+  tasks:
+    - name: Get uptime
+      command: uptime -p
+      register: uptime_output
+
+    - name: Format uptime
+      set_fact:
+        formatted_uptime: "{{ uptime_output.stdout | regex_replace('^up ', '') }}"
+
+    - name: Prepare output string
+      set_fact:
+        output_string: "{{ inventory_hostname }}: {{ formatted_uptime }}"
+
+    - name: Print uptime in clean format
+      debug:
+        msg: "{{ output_string }}"
